@@ -14,9 +14,9 @@ using System.Collections.Generic;
 
 namespace GitHubWebhookFunction
 {
-    public static class Function1
+    public static class PushCatcher
     {
-        [FunctionName("Function1")]
+        [FunctionName("PushCatcher")]
         public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)]HttpRequest req, ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a GitHub webhook request.");

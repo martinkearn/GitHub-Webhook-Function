@@ -7,28 +7,32 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs.Host;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
+using System.Net.Http;
+using System;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace GitHubWebhookFunction
 {
     public static class Function1
     {
         [FunctionName("Function1")]
-        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)]HttpRequest req, ILogger log)
+        public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)]HttpRequest req, ILogger log)
         {
-            log.LogInformation("C# HTTP trigger function processed a request.");
+            log.LogInformation("C# HTTP trigger function processed a GitHub webhook request.");
 
             // get payload
             string requestBody = new StreamReader(req.Body).ReadToEnd();
-            dynamic webhookPayload = JsonConvert.DeserializeObject(requestBody);
+            dynamic payload = JsonConvert.DeserializeObject(requestBody);
 
             // get commit details required to call API
-            var commitId = webhookPayload.after;
-            var owner = webhookPayload.head_commit.author.username;
-            var repo = webhookPayload.repository.name;
+            var commitId = payload.after;
+            var owner = payload.head_commit.author.username;
+            var repo = payload.repository.name;
+            var fileAdded = payload.head_commit.added[0];
 
-
-
-            return (ActionResult)new OkObjectResult($"We got data for {commitId} by {owner} on {repo}");
+            // respond
+            return (ActionResult)new OkObjectResult($"We got data for {commitId} which added {fileAdded} by {owner} on {repo}");
         }
     }
 }

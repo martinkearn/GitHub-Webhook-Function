@@ -29,10 +29,9 @@ namespace GitHubWebhookFunction
             var commitId = payload.after;
             var owner = payload.head_commit.author.username;
             var repo = payload.repository.name;
-            var fileAdded = payload.head_commit.added[0];
 
             // respond
-            return (ActionResult)new OkObjectResult($"We got data for {commitId} which added {fileAdded} by {owner} on {repo}");
+            return (ActionResult)new OkObjectResult($"We got data for {commitId} by {owner} on {repo}.");
         }
     }
 }

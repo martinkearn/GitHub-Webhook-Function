@@ -17,15 +17,18 @@ namespace GitHubWebhookFunction
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            string name = req.Query["name"];
-
+            // get payload
             string requestBody = new StreamReader(req.Body).ReadToEnd();
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
-            name = name ?? data?.name;
+            dynamic webhookPayload = JsonConvert.DeserializeObject(requestBody);
 
-            return name != null
-                ? (ActionResult)new OkObjectResult($"Hello, {name}")
-                : new BadRequestObjectResult("Please pass a name on the query string or in the request body");
+            // get commit details required to call API
+            var commitId = webhookPayload.after;
+            var owner = webhookPayload.head_commit.author.username;
+            var repo = webhookPayload.repository.name;
+
+
+
+            return (ActionResult)new OkObjectResult($"We got data for {commitId} by {owner} on {repo}");
         }
     }
 }
